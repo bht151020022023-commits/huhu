@@ -249,15 +249,22 @@ snapshot.forEach(doc=>docs.push({date:doc.id,...doc.data()}));
 docs.sort((a,b)=>b.date.localeCompare(a.date));
 
 docs.forEach(d=>{
+const r=d.running||0;
+const rd=d.reading||0;
+const s=d.study||0;
+
+// Nếu 0 0 0 thì bỏ qua
+if(r===0 && rd===0 && s===0) return;
+
 const card=document.createElement("div");
 card.className="card";
 card.innerHTML=`
 <strong>${d.date}</strong><br>
-🏃 ${d.running||0} km |
-📚 ${d.reading||0} trang |
-⏱ ${d.study||0} giờ
+🏃 ${r} km |
+📚 ${rd} trang |
+⏱ ${s} giờ
 <br>
-<button class="smallBtn" onclick="openEdit('${d.date}',${d.running||0},${d.reading||0},${d.study||0})">✏️ Sửa</button>
+<button class="smallBtn" onclick="openEdit('${d.date}',${r},${rd},${s})">✏️ Sửa</button>
 `;
 historyContainer.appendChild(card);
 });
@@ -269,6 +276,7 @@ monthlyContainer.classList.remove("hidden");
 
 const snapshot=await getDocs(collection(db,"habits"));
 let monthly={};
+
 snapshot.forEach(doc=>{
 const d={date:doc.id,...doc.data()};
 const month=d.date.slice(0,7);
