@@ -7,6 +7,7 @@
 body { font-family: Arial; text-align:center; background:#111; color:white; }
 button { padding:10px 18px; margin:6px; border:none; border-radius:6px; cursor:pointer; }
 .box { background:#222; padding:20px; margin:20px auto; border-radius:10px; width:320px; }
+input { padding:6px; margin:5px; border-radius:6px; border:none; }
 </style>
 </head>
 <body>
@@ -30,8 +31,14 @@ button { padding:10px 18px; margin:6px; border:none; border-radius:6px; cursor:p
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithRedirect, 
+  getRedirectResult, 
+  signOut, 
+  onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -55,17 +62,32 @@ const appBox = document.getElementById("appBox");
 const status = document.getElementById("status");
 const todayStatus = document.getElementById("todayStatus");
 const dateInput = document.getElementById("datePicker");
+const userInfo = document.getElementById("userInfo");
 
 dateInput.value = new Date().toISOString().split("T")[0];
 
 let currentUser = null;
 
+// LOGIN
 document.getElementById("googleLogin").onclick = async () => {
-  await signInWithPopup(auth, provider);
+  await signInWithRedirect(auth, provider);
 };
 
+// HANDLE REDIRECT RESULT
+getRedirectResult(auth)
+  .then((result) => {
+    if (result) {
+      console.log("Login success");
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+// LOGOUT
 document.getElementById("logoutBtn").onclick = () => signOut(auth);
 
+// AUTH STATE
 onAuthStateChanged(auth, user => {
   if (user) {
     currentUser = user;
@@ -79,6 +101,7 @@ onAuthStateChanged(auth, user => {
   }
 });
 
+// LOAD DATA
 async function loadData() {
   const docRef = doc(db, "users", currentUser.uid, "habits", dateInput.value);
   const snap = await getDoc(docRef);
@@ -93,6 +116,7 @@ async function loadData() {
   }
 }
 
+// SAVE DATA
 document.getElementById("readingBtn").onclick = async () => {
   const docRef = doc(db, "users", currentUser.uid, "habits", dateInput.value);
   await setDoc(docRef, { reading: true }, { merge: true });
