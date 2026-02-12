@@ -75,6 +75,24 @@ border-radius:12px;
 margin-bottom:10px;
 }
 
+.monthHeader{
+background:#222;
+padding:10px;
+border-radius:10px;
+cursor:pointer;
+margin-top:8px;
+}
+
+.monthContent{
+overflow:hidden;
+max-height:0;
+transition:max-height 0.4s ease;
+}
+
+.monthContent.open{
+max-height:200px;
+}
+
 .modal{
 position:fixed;
 top:0;
@@ -108,7 +126,6 @@ max-width:350px;
 <body>
 
 <div class="container">
-
 <h2>🔥 Habit Fire</h2>
 
 <div id="loginBox">
@@ -120,28 +137,27 @@ max-width:350px;
 <div id="appBox" class="hidden">
 
 <button class="mainBtn" style="background:#444;" id="logoutBtn">🚪 Thoát</button>
-
 <input type="date" id="datePicker">
 
-<button class="mainBtn runBtn" id="btnRunning">🏃 Chạy bộ</button>
+<button class="mainBtn runBtn" onclick="toggleBox('runningBox')">🏃 Chạy bộ</button>
 <div id="runningBox" class="hidden">
 <input type="number" id="runningInput" placeholder="Nhập km">
-<button class="smallBtn" id="saveRunningBtn">Lưu</button>
+<button class="smallBtn" onclick="saveData('running')">Lưu</button>
 </div>
 
-<button class="mainBtn readBtn" id="btnReading">📚 Đọc sách</button>
+<button class="mainBtn readBtn" onclick="toggleBox('readingBox')">📚 Đọc sách</button>
 <div id="readingBox" class="hidden">
 <input type="number" id="readingInput" placeholder="Nhập trang">
-<button class="smallBtn" id="saveReadingBtn">Lưu</button>
+<button class="smallBtn" onclick="saveData('reading')">Lưu</button>
 </div>
 
-<button class="mainBtn studyBtn" id="btnStudy">⏱ Học / Tập</button>
+<button class="mainBtn studyBtn" onclick="toggleBox('studyBox')">⏱ Học / Tập</button>
 <div id="studyBox" class="hidden">
 <input type="number" id="studyInput" placeholder="Nhập giờ">
-<button class="smallBtn" id="saveStudyBtn">Lưu</button>
+<button class="smallBtn" onclick="saveData('study')">Lưu</button>
 </div>
 
-<button class="mainBtn" style="background:#222;" id="toggleStatsBtn">📊 Tổng kết</button>
+<button class="mainBtn" style="background:#222;" onclick="toggleStats()">📊 Tổng kết</button>
 
 <div id="statsContainer" class="hidden"></div>
 
@@ -150,11 +166,11 @@ max-width:350px;
 
 <div id="editModal" class="modal">
   <div class="modalContent">
-    <h3 id="editDateTitle"></h3>
-    <input type="number" id="editRunning" placeholder="Km">
-    <input type="number" id="editReading" placeholder="Trang">
-    <input type="number" id="editStudy" placeholder="Giờ">
-    <button class="smallBtn" id="saveEditBtn">Lưu</button>
+    <h3 id="editTitle"></h3>
+    <input type="number" id="editRunning">
+    <input type="number" id="editReading">
+    <input type="number" id="editStudy">
+    <button class="smallBtn" onclick="saveEdit()">Lưu</button>
   </div>
 </div>
 
@@ -173,68 +189,56 @@ projectId:"runnn-e4e8c"
 const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 
-const loginBox=document.getElementById("loginBox");
-const appBox=document.getElementById("appBox");
-const statsContainer=document.getElementById("statsContainer");
+let currentEditDate="";
 
 loginBtn.onclick=()=>{
 if(passwordInput.value==="1111"){
 localStorage.setItem("loggedIn","true");
-showApp();
+loginBox.classList.add("hidden");
+appBox.classList.remove("hidden");
 }else{
 loginStatus.innerText="Sai mật khẩu!";
 }
 };
+
+if(localStorage.getItem("loggedIn")==="true"){
+loginBox.classList.add("hidden");
+appBox.classList.remove("hidden");
+}
 
 logoutBtn.onclick=()=>{
 localStorage.removeItem("loggedIn");
 location.reload();
 };
 
-function showApp(){
-loginBox.classList.add("hidden");
-appBox.classList.remove("hidden");
+window.toggleBox=function(id){
+document.getElementById(id).classList.toggle("hidden");
+};
+
+window.saveData=async function(type){
+const date=datePicker.value;
+const value=Number(document.getElementById(type+"Input").value);
+
+await setDoc(doc(db,"habits",date),{[type]:value},{merge:true});
+document.getElementById(type+"Input").value="";
+};
+
+window.toggleStats=function(){
+if(statsContainer.classList.contains("hidden")){
+loadStats();
+}else{
+statsContainer.classList.add("hidden");
 }
-
-if(localStorage.getItem("loggedIn")==="true"){
-showApp();
-}
-
-btnRunning.onclick=()=>runningBox.classList.toggle("hidden");
-btnReading.onclick=()=>readingBox.classList.toggle("hidden");
-btnStudy.onclick=()=>studyBox.classList.toggle("hidden");
-
-saveRunningBtn.onclick=async()=>{
-await setDoc(doc(db,"habits",datePicker.value),
-{running:Number(runningInput.value)},{merge:true});
-runningInput.value="";
-runningBox.classList.add("hidden");
 };
-
-saveReadingBtn.onclick=async()=>{
-await setDoc(doc(db,"habits",datePicker.value),
-{reading:Number(readingInput.value)},{merge:true});
-readingInput.value="";
-readingBox.classList.add("hidden");
-};
-
-saveStudyBtn.onclick=async()=>{
-await setDoc(doc(db,"habits",datePicker.value),
-{study:Number(studyInput.value)},{merge:true});
-studyInput.value="";
-studyBox.classList.add("hidden");
-};
-
-toggleStatsBtn.onclick=loadStats;
 
 async function loadStats(){
-const snapshot=await getDocs(collection(db,"habits"));
 statsContainer.innerHTML="";
 statsContainer.classList.remove("hidden");
 
-let monthlyTotals={};
+const snapshot=await getDocs(collection(db,"habits"));
+let monthly={};
+let docs=[];
 
-const docs=[];
 snapshot.forEach(doc=>{
 docs.push({date:doc.id,...doc.data()});
 });
@@ -243,14 +247,11 @@ docs.sort((a,b)=>b.date.localeCompare(a.date));
 
 docs.forEach(d=>{
 const month=d.date.slice(0,7);
+if(!monthly[month]) monthly[month]={running:0,reading:0,study:0};
 
-if(!monthlyTotals[month]){
-monthlyTotals[month]={running:0,reading:0,study:0};
-}
-
-monthlyTotals[month].running+=d.running||0;
-monthlyTotals[month].reading+=d.reading||0;
-monthlyTotals[month].study+=d.study||0;
+monthly[month].running+=d.running||0;
+monthly[month].reading+=d.reading||0;
+monthly[month].study+=d.study||0;
 
 const card=document.createElement("div");
 card.className="card";
@@ -262,44 +263,53 @@ card.innerHTML=`
 <br>
 <button class="smallBtn" onclick="openEdit('${d.date}',${d.running||0},${d.reading||0},${d.study||0})">✏️ Sửa</button>
 `;
-
 statsContainer.appendChild(card);
 });
 
 const title=document.createElement("h3");
 title.innerText="📊 Tổng kết theo tháng";
-title.style.marginTop="20px";
 statsContainer.appendChild(title);
 
-for(const m in monthlyTotals){
-const box=document.createElement("div");
-box.className="card";
-box.innerHTML=`
-<strong>${m}</strong><br>
-🏃 ${monthlyTotals[m].running} km<br>
-📚 ${monthlyTotals[m].reading} trang<br>
-⏱ ${monthlyTotals[m].study} giờ
+for(const m in monthly){
+const header=document.createElement("div");
+header.className="monthHeader";
+header.innerText=m;
+header.onclick=function(){
+content.classList.toggle("open");
+};
+
+const content=document.createElement("div");
+content.className="monthContent";
+content.innerHTML=`
+<div class="card">
+🏃 ${monthly[m].running} km<br>
+📚 ${monthly[m].reading} trang<br>
+⏱ ${monthly[m].study} giờ
+</div>
 `;
-statsContainer.appendChild(box);
+
+statsContainer.appendChild(header);
+statsContainer.appendChild(content);
 }
 }
 
 window.openEdit=function(date,r,rd,s){
+currentEditDate=date;
 editModal.classList.add("open");
-editDateTitle.innerText="Chỉnh ngày "+date;
+editTitle.innerText="Chỉnh ngày "+date;
 editRunning.value=r;
 editReading.value=rd;
 editStudy.value=s;
+};
 
-saveEditBtn.onclick=async()=>{
-await setDoc(doc(db,"habits",date),{
+window.saveEdit=async function(){
+await setDoc(doc(db,"habits",currentEditDate),{
 running:Number(editRunning.value),
 reading:Number(editReading.value),
 study:Number(editStudy.value)
 });
 editModal.classList.remove("open");
 loadStats();
-};
 };
 
 editModal.onclick=(e)=>{
