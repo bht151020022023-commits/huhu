@@ -137,6 +137,7 @@ max-width:350px;
 <div id="appBox" class="hidden">
 
 <button class="mainBtn" style="background:#444;" id="logoutBtn">🚪 Thoát</button>
+
 <input type="date" id="datePicker">
 
 <button class="mainBtn runBtn" onclick="toggleBox('runningBox')">🏃 Chạy bộ</button>
@@ -157,9 +158,11 @@ max-width:350px;
 <button class="smallBtn" onclick="saveData('study')">Lưu</button>
 </div>
 
-<button class="mainBtn" style="background:#222;" onclick="toggleStats()">📊 Tổng kết</button>
+<button class="mainBtn" style="background:#333;" onclick="toggleHistory()">📝 Lịch sử nhập</button>
+<div id="historyContainer" class="hidden"></div>
 
-<div id="statsContainer" class="hidden"></div>
+<button class="mainBtn" style="background:#222;" onclick="toggleMonthly()">📊 Tổng kết tháng</button>
+<div id="monthlyContainer" class="hidden"></div>
 
 </div>
 </div>
@@ -211,48 +214,41 @@ localStorage.removeItem("loggedIn");
 location.reload();
 };
 
-window.toggleBox=function(id){
-document.getElementById(id).classList.toggle("hidden");
-};
+window.toggleBox=id=>document.getElementById(id).classList.toggle("hidden");
 
 window.saveData=async function(type){
 const date=datePicker.value;
 const value=Number(document.getElementById(type+"Input").value);
-
 await setDoc(doc(db,"habits",date),{[type]:value},{merge:true});
 document.getElementById(type+"Input").value="";
 };
 
-window.toggleStats=function(){
-if(statsContainer.classList.contains("hidden")){
-loadStats();
+window.toggleHistory=function(){
+if(historyContainer.classList.contains("hidden")){
+loadHistory();
 }else{
-statsContainer.classList.add("hidden");
+historyContainer.classList.add("hidden");
 }
 };
 
-async function loadStats(){
-statsContainer.innerHTML="";
-statsContainer.classList.remove("hidden");
+window.toggleMonthly=function(){
+if(monthlyContainer.classList.contains("hidden")){
+loadMonthly();
+}else{
+monthlyContainer.classList.add("hidden");
+}
+};
+
+async function loadHistory(){
+historyContainer.innerHTML="";
+historyContainer.classList.remove("hidden");
 
 const snapshot=await getDocs(collection(db,"habits"));
-let monthly={};
 let docs=[];
-
-snapshot.forEach(doc=>{
-docs.push({date:doc.id,...doc.data()});
-});
-
+snapshot.forEach(doc=>docs.push({date:doc.id,...doc.data()}));
 docs.sort((a,b)=>b.date.localeCompare(a.date));
 
 docs.forEach(d=>{
-const month=d.date.slice(0,7);
-if(!monthly[month]) monthly[month]={running:0,reading:0,study:0};
-
-monthly[month].running+=d.running||0;
-monthly[month].reading+=d.reading||0;
-monthly[month].study+=d.study||0;
-
 const card=document.createElement("div");
 card.className="card";
 card.innerHTML=`
@@ -263,20 +259,29 @@ card.innerHTML=`
 <br>
 <button class="smallBtn" onclick="openEdit('${d.date}',${d.running||0},${d.reading||0},${d.study||0})">✏️ Sửa</button>
 `;
-statsContainer.appendChild(card);
+historyContainer.appendChild(card);
 });
+}
 
-const title=document.createElement("h3");
-title.innerText="📊 Tổng kết theo tháng";
-statsContainer.appendChild(title);
+async function loadMonthly(){
+monthlyContainer.innerHTML="";
+monthlyContainer.classList.remove("hidden");
+
+const snapshot=await getDocs(collection(db,"habits"));
+let monthly={};
+snapshot.forEach(doc=>{
+const d={date:doc.id,...doc.data()};
+const month=d.date.slice(0,7);
+if(!monthly[month]) monthly[month]={running:0,reading:0,study:0};
+monthly[month].running+=d.running||0;
+monthly[month].reading+=d.reading||0;
+monthly[month].study+=d.study||0;
+});
 
 for(const m in monthly){
 const header=document.createElement("div");
 header.className="monthHeader";
 header.innerText=m;
-header.onclick=function(){
-content.classList.toggle("open");
-};
 
 const content=document.createElement("div");
 content.className="monthContent";
@@ -288,8 +293,10 @@ content.innerHTML=`
 </div>
 `;
 
-statsContainer.appendChild(header);
-statsContainer.appendChild(content);
+header.onclick=()=>content.classList.toggle("open");
+
+monthlyContainer.appendChild(header);
+monthlyContainer.appendChild(content);
 }
 }
 
@@ -309,7 +316,7 @@ reading:Number(editReading.value),
 study:Number(editStudy.value)
 });
 editModal.classList.remove("open");
-loadStats();
+loadHistory();
 };
 
 editModal.onclick=(e)=>{
