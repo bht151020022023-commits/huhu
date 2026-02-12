@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habit Fire</title>
+
+<style>
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+background:linear-gradient(180deg,#000,#1a0000,#330000);
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+}
+
+.container{
+width:95%;
+max-width:420px;
+background:rgba(0,0,0,0.6);
+padding:20px;
+border-radius:20px;
+backdrop-filter:blur(10px);
+}
+
+h2{text-align:center;}
+
+.mainBtn{
+width:100%;
+padding:14px;
+margin:8px 0;
+border-radius:14px;
+border:none;
+font-size:16px;
+font-weight:bold;
+color:white;
+cursor:pointer;
+}
+
+.runBtn{background:linear-gradient(45deg,#ff3c00,#ff7300);}
+.readBtn{background:linear-gradient(45deg,#0066ff,#00c3ff);}
+.studyBtn{background:linear-gradient(45deg,#7b00ff,#c300ff);}
+
+input{
+width:100%;
+padding:12px;
+margin:6px 0;
+border-radius:12px;
+border:none;
+background:rgba(255,255,255,0.1);
+color:white;
+font-size:15px;
+}
+
+.saveBtn{
+width:100%;
+padding:10px;
+font-size:14px;
+background:#ff0000;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+
+.hidden{display:none;}
+
+.card{
+background:rgba(255,255,255,0.07);
+padding:10px;
+border-radius:12px;
+margin-bottom:10px;
+}
+
+/* MODAL */
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+display:flex;
+justify-content:center;
+align-items:center;
+opacity:0;
+pointer-events:none;
+transition:0.3s;
+}
+
+.modal.open{
+opacity:1;
+pointer-events:auto;
+}
+
+.modalContent{
+background:#111;
+padding:20px;
+border-radius:18px;
+width:90%;
+max-width:350px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🔥 Habit Fire</h2>
+
+<div id="loginBox">
+<input type="password" id="passwordInput" placeholder="Nhập mật khẩu">
+<button class="mainBtn runBtn" id="loginBtn">Vào</button>
+<div id="loginStatus"></div>
+</div>
+
+<div id="appBox" class="hidden">
+
+<button class="mainBtn" style="background:#444;" id="logoutBtn">🚪 Thoát</button>
+
+<input type="date" id="datePicker">
+
+<button class="mainBtn runBtn" id="btnRunning">🏃 Chạy bộ</button>
+<div id="runningBox" class="hidden">
+<input type="number" id="runningInput" placeholder="Nhập km">
+<button class="saveBtn" id="saveRunningBtn">Lưu</button>
+</div>
+
+<button class="mainBtn readBtn" id="btnReading">📚 Đọc sách</button>
+<div id="readingBox" class="hidden">
+<input type="number" id="readingInput" placeholder="Nhập trang">
+<button class="saveBtn" id="saveReadingBtn">Lưu</button>
+</div>
+
+<button class="mainBtn studyBtn" id="btnStudy">⏱ Học / Tập</button>
+<div id="studyBox" class="hidden">
+<input type="number" id="studyInput" placeholder="Nhập giờ">
+<button class="saveBtn" id="saveStudyBtn">Lưu</button>
+</div>
+
+<button class="mainBtn" style="background:#222;" id="toggleStatsBtn">📊 Tổng kết</button>
+
+<div id="statsContainer" class="hidden"></div>
+
+</div>
+</div>
+
+<!-- MODAL -->
+<div id="editModal" class="modal">
+  <div class="modalContent">
+    <h3 id="editDateTitle"></h3>
+    <input type="number" id="editRunning" placeholder="Km">
+    <input type="number" id="editReading" placeholder="Trang">
+    <input type="number" id="editStudy" placeholder="Giờ">
+    <button class="saveBtn" id="saveEditBtn">Lưu thay đổi</button>
+  </div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDocs, collection } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyBDynXh5cyWlMe0CikNUMnFqPaL8LASm4",
+authDomain:"runnn-e4e8c.firebaseapp.com",
+projectId:"runnn-e4e8c"
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
+
+const loginBox=document.getElementById("loginBox");
+const appBox=document.getElementById("appBox");
+const statsContainer=document.getElementById("statsContainer");
+
+document.getElementById("loginBtn").onclick=()=>{
+if(passwordInput.value==="1111"){
+localStorage.setItem("loggedIn","true");
+showApp();
+}else{
+loginStatus.innerText="Sai mật khẩu!";
+}
+};
+
+document.getElementById("logoutBtn").onclick=()=>{
+localStorage.removeItem("loggedIn");
+location.reload();
+};
+
+function showApp(){
+loginBox.classList.add("hidden");
+appBox.classList.remove("hidden");
+}
+
+if(localStorage.getItem("loggedIn")==="true"){
+showApp();
+}
+
+document.getElementById("btnRunning").onclick=()=>runningBox.classList.toggle("hidden");
+document.getElementById("btnReading").onclick=()=>readingBox.classList.toggle("hidden");
+document.getElementById("btnStudy").onclick=()=>studyBox.classList.toggle("hidden");
+
+document.getElementById("saveRunningBtn").onclick=async()=>{
+await setDoc(doc(db,"habits",datePicker.value),
+{running:Number(runningInput.value)},{merge:true});
+runningInput.value="";
+runningBox.classList.add("hidden");
+};
+
+document.getElementById("saveReadingBtn").onclick=async()=>{
+await setDoc(doc(db,"habits",datePicker.value),
+{reading:Number(readingInput.value)},{merge:true});
+readingInput.value="";
+readingBox.classList.add("hidden");
+};
+
+document.getElementById("saveStudyBtn").onclick=async()=>{
+await setDoc(doc(db,"habits",datePicker.value),
+{study:Number(studyInput.value)},{merge:true});
+studyInput.value="";
+studyBox.classList.add("hidden");
+};
+
+document.getElementById("toggleStatsBtn").onclick=loadStats;
+
+async function loadStats(){
+const snapshot=await getDocs(collection(db,"habits"));
+statsContainer.innerHTML="";
+statsContainer.classList.remove("hidden");
+
+const docs=[];
+snapshot.forEach(doc=>docs.push({date:doc.id,...doc.data()}));
+docs.sort((a,b)=>b.date.localeCompare(a.date));
+
+docs.forEach(d=>{
+const card=document.createElement("div");
+card.className="card";
+card.innerHTML=`
+<strong>${d.date}</strong><br>
+🏃 ${d.running||0} km |
+📚 ${d.reading||0} trang |
+⏱ ${d.study||0} giờ
+<br>
+<button class="saveBtn" style="margin-top:6px;" onclick="openEdit('${d.date}',${d.running||0},${d.reading||0},${d.study||0})">✏️ Sửa</button>
+`;
+statsContainer.appendChild(card);
+});
+}
+
+window.openEdit=function(date,r,rd,s){
+editModal.classList.add("open");
+editDateTitle.innerText="Chỉnh ngày "+date;
+editRunning.value=r;
+editReading.value=rd;
+editStudy.value=s;
+saveEditBtn.onclick=async()=>{
+await setDoc(doc(db,"habits",date),{
+running:Number(editRunning.value),
+reading:Number(editReading.value),
+study:Number(editStudy.value)
+});
+editModal.classList.remove("open");
+loadStats();
+};
+};
+
+editModal.onclick=(e)=>{
+if(e.target===editModal){
+editModal.classList.remove("open");
+}
+};
+
+</script>
+</body>
+</html>
