@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Habit Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #111;
+      color: white;
+      margin-top: 50px;
+    }
+
+    input {
+      padding: 8px;
+      font-size: 16px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    button {
+      padding: 10px 18px;
+      margin: 8px;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .reading { background: #2196F3; color: white; }
+    .running { background: #4CAF50; color: white; }
+
+    .box {
+      background: #222;
+      padding: 20px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-top: 20px;
+    }
+
+    #status {
+      margin-top: 15px;
+      color: #00ffcc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📊 Habit Tracker</h1>
+
+  <div class="box">
+    <h3>Chọn ngày</h3>
+    <input type="date" id="datePicker">
+    <br>
+    <button class="reading" id="readingBtn">📚 Đã đọc sách</button>
+    <button class="running" id="runningBtn">🏃 Đã chạy bộ</button>
+    <p id="status"></p>
+    <p id="todayStatus"></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDynXh5cyWlMe0CikNUMnFqPaL8LASm4",
+      authDomain: "runnn-e4e8c.firebaseapp.com",
+      projectId: "runnn-e4e8c",
+      storageBucket: "runnn-e4e8c.firebasestorage.app",
+      messagingSenderId: "45995361250",
+      appId: "1:45995361250:web:6d07990d673eee92e4afbb"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const dateInput = document.getElementById("datePicker");
+    const status = document.getElementById("status");
+    const todayStatus = document.getElementById("todayStatus");
+
+    // mặc định là hôm nay
+    dateInput.value = new Date().toISOString().split("T")[0];
+
+    async function loadData() {
+      const selectedDate = dateInput.value;
+      const docRef = doc(db, "habits", selectedDate);
+      const snap = await getDoc(docRef);
+
+      if (snap.exists()) {
+        const data = snap.data();
+        todayStatus.innerText =
+          "📚 Đọc sách: " + (data.reading ? "✔" : "✘") +
+          " | 🏃 Chạy bộ: " + (data.running ? "✔" : "✘");
+      } else {
+        todayStatus.innerText = "Chưa có dữ liệu ngày này";
+      }
+    }
+
+    document.getElementById("readingBtn").onclick = async () => {
+      const selectedDate = dateInput.value;
+      const docRef = doc(db, "habits", selectedDate);
+      await setDoc(docRef, { reading: true }, { merge: true });
+      status.innerText = "Đã lưu đọc sách!";
+      loadData();
+    };
+
+    document.getElementById("runningBtn").onclick = async () => {
+      const selectedDate = dateInput.value;
+      const docRef = doc(db, "habits", selectedDate);
+      await setDoc(docRef, { running: true }, { merge: true });
+      status.innerText = "Đã lưu chạy bộ!";
+      loadData();
+    };
+
+    dateInput.addEventListener("change", loadData);
+
+    loadData();
+  </script>
+
+</body>
+</html>
