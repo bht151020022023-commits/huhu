@@ -1189,7 +1189,114 @@ let allQuestions = [
     ],
     answer: "B",
     explanation: "Tất cả công việc bảo dưỡng đều phải ghi và ký."
-},  
+},
+    {
+    id: 101,
+    question: "Who can sign the Certificate of Release to Service for aircraft with maximum take-off weight 5700 kg more?",
+    options: [
+        "A. An ARS licensed engineer.",
+        "B. An AMT licensed engineer.",
+        "C. The holder of an Inspection Authorization."
+    ],
+    answer: "B",
+    explanation: "CRS phải do AMT licensed engineer ký."
+},
+
+{
+    id: 102,
+    question: "Airworthiness Directive (AD) applicable for Vietnam registered aircraft is issued by.",
+    options: [
+        "A. The TC holder.",
+        "B. ICAO.",
+        "C. CAAV and Competent Authority of the State of Design."
+    ],
+    answer: "C",
+    explanation: "AD do CAAV và State of Design ban hành."
+},
+
+{
+    id: 103,
+    question: "Which aircraft part must be listed and time controlled.",
+    options: [
+        "A. life limited parts and parts subject to a mandatory overhaul life.",
+        "B. standard parts.",
+        "C. ESDS parts."
+    ],
+    answer: "A",
+    explanation: "Life limited parts phải kiểm soát thời gian."
+},
+
+{
+    id: 104,
+    question: "Which is definition of modification.",
+    options: [
+        "A. The examination of an aircraft or aircraft component to establish conformity with a standard approved by the CAAV.",
+        "B. The alteration of an aircraft/component in conformity with an approved standard.",
+        "C. The restoration of an aircraft/aircraft component to a serviceable condition in conformity with an approved standard."
+    ],
+    answer: "B",
+    explanation: "Modification là thay đổi thiết kế theo tiêu chuẩn."
+},
+
+{
+    id: 105,
+    question: "Aircraft Class I Product is.",
+    options: [
+        "A. A complete aircraft, aircraft engine, or propeller that has been type-certificated in accordance with the applicable regulations, and for which approved Specifications or TC data sheets have been issued.",
+        "B. A major component (e.g., wings, fuselages, empennage assemblies, landing gears, power transmissions, or control surfaces, etc.).",
+        "C. A part manufactured in complete compliance with an established Government or industry accepted specification which includes design, manufacturing, and uniform identification requirements."
+    ],
+    answer: "A",
+    explanation: "Class I = aircraft/engine/propeller đã được type certificate."
+},
+
+{
+    id: 106,
+    question: "Unsalvageable Parts.",
+    options: [
+        "A. Can be re-used.",
+        "B. Should be mutilated and disposed.",
+        "C. Sold as serviceable parts."
+    ],
+    answer: "B",
+    explanation: "Parts không cứu được phải tiêu hủy."
+},
+
+{
+    id: 107,
+    question: "What is airworthy status of an aircraft engine, propeller or part.",
+    options: [
+        "A. when it conforms to its approved design.",
+        "B. when it conforms to its approved design and is in a condition for safe operation.",
+        "C. The status of an aircraft engine, propeller or part when it be maintained."
+    ],
+    answer: "B",
+    explanation: "Airworthy = đúng thiết kế + an toàn vận hành."
+},
+
+{
+    id: 108,
+    question: "When an unserviceable component is removed from an aircraft and replaced with a different component to carry out the same function it is classified as.",
+    options: [
+        "A. a repair.",
+        "B. a modification.",
+        "C. a replacement."
+    ],
+    answer: "C",
+    explanation: "Thay bằng cái khác → replacement."
+},
+
+{
+    id: 109,
+    question: "All maintenance tasks for the aircraft shall be certified to confirm the maintenance completion and recorded into the aircraft record system, in not later than:",
+    options: [
+        "A. 30 days since the date of accomplishment of the maintenance tasks.",
+        "B. 7 days since the date of accomplishment of the maintenance tasks.",
+        "C. 15 days since the date of accomplishment of the maintenance tasks."
+    ],
+    answer: "A",
+    explanation: "Phải ghi nhận trong vòng 30 ngày."
+},
     {
     id: 110,
     question: "What happens to a life-limited component when removed from an aircraft?",
