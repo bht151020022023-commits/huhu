@@ -2262,6 +2262,280 @@ let allQuestions = [
     answer: "A",
     explanation: "AMT tối thiểu 18 tuổi."
 },
+    {
+    id: 200,
+    question: "A VAR Part 5 organisation's accountable manager is responsible for.",
+    options: [
+        "A. ensuring that all line maintenance procedures are carried out.",
+        "B. ensuring that all necessary resources are available to accomplish maintenance.",
+        "C. ensuring that all base maintenance procedures are carried out."
+    ],
+    answer: "B",
+    explanation: "Accountable Manager chịu trách nhiệm đảm bảo đủ nguồn lực (nhân lực, thiết bị, tài chính) cho maintenance."
+},
+
+{
+    id: 201,
+    question: "The requirement for VAR Part 5 AMO facilities.",
+    options: [
+        "A. hangar with no specific requirement",
+        "B. no need to have office, all work can be performed in hangar",
+        "C. Storage facilities shall be clean, ventilated, temperature controlled to prevent deterioration"
+    ],
+    answer: "C",
+    explanation: "Kho phải sạch, thông thoáng, kiểm soát nhiệt độ để tránh hỏng vật tư."
+},
+
+{
+    id: 202,
+    question: "The requirement for a Quality Assurance System for a maintenance organisation are set out in.",
+    options: [
+        "A. VAR Part 21",
+        "B. VAR Part 4",
+        "C. VAR Part 5"
+    ],
+    answer: "C",
+    explanation: "QA system của AMO nằm trong VAR Part 5."
+},
+
+{
+    id: 203,
+    question: "An Authorised certifying staff will sign a CRS when.",
+    options: [
+        "A. all physical work finished",
+        "B. qualified for company approval",
+        "C. required maintenance carried out IAW maintenance procedure manual"
+    ],
+    answer: "C",
+    explanation: "Chỉ ký CRS khi công việc hoàn thành đúng quy trình (IAW manual)."
+},
+
+{
+    id: 204,
+    question: "Specific class or limited ratings of an organisation can be found in.",
+    options: [
+        "A. maintenance schedule",
+        "B. VAR Part145 list",
+        "C. Operations Specifications"
+    ],
+    answer: "C",
+    explanation: "Ops Spec ghi rõ rating, limitation."
+},
+
+{
+    id: 205,
+    question: "A CAAV approved capability list gives.",
+    options: [
+        "A. operational restrictions",
+        "B. scope of engineer license",
+        "C. details of items approved for maintenance or modification"
+    ],
+    answer: "C",
+    explanation: "Capability list = những gì AMO được phép làm."
+},
+
+{
+    id: 206,
+    question: "The Base Maintenance manager shall be responsible for.",
+    options: [
+        "A. ensuring all maintenance in hangar meets design and quality standards",
+        "B. only defect rectification",
+        "C. monitoring compliance"
+    ],
+    answer: "A",
+    explanation: "Base manager chịu trách nhiệm toàn bộ maintenance trong hangar."
+},
+
+{
+    id: 207,
+    question: "VAR Part 5 prescribes the requirements of.",
+    options: [
+        "A. Approved aircraft maintenance organization",
+        "B. Operator certification",
+        "C. Training organization"
+    ],
+    answer: "A",
+    explanation: "VAR Part 5 = AMO."
+},
+
+{
+    id: 208,
+    question: "VAR Part 5 AMO certificate is signed by.",
+    options: [
+        "A. CAAV",
+        "B. Manufacturer",
+        "C. Operator"
+    ],
+    answer: "A",
+    explanation: "CAAV cấp và ký chứng chỉ AMO."
+},
+
+{
+    id: 209,
+    question: "AMO Operations Specifications will contain.",
+    options: [
+        "A. terms of approval including ratings and limitations",
+        "B. validity date",
+        "C. location only"
+    ],
+    answer: "A",
+    explanation: "Ops Spec ghi rõ scope + limitation."
+},
+
+{
+    id: 210,
+    question: "AMO certificate will contain.",
+    options: [
+        "A. certificate number, issue date and validity",
+        "B. signatures only",
+        "C. ratings"
+    ],
+    answer: "A",
+    explanation: "Certificate có số, ngày cấp, thời hạn."
+},
+
+{
+    id: 211,
+    question: "A maintenance release shall be issued by.",
+    options: [
+        "A. appropriately authorised certifying staff",
+        "B. AMO engineer",
+        "C. technician"
+    ],
+    answer: "A",
+    explanation: "Chỉ certifying staff được ủy quyền mới ký CRS."
+},
+
+{
+    id: 212,
+    question: "AMO certificate includes.",
+    options: [
+        "A. one page certificate and multi-page Operations Specifications",
+        "B. one page only",
+        "C. signed by operator"
+    ],
+    answer: "A",
+    explanation: "AMO cert gồm certificate + Ops Spec."
+},
+
+{
+    id: 213,
+    question: "VAR Part 5 AMO production man-hour plan relates to.",
+    options: [
+        "A. hangar visit plan for base maintenance",
+        "B. permanent time",
+        "C. QA function"
+    ],
+    answer: "A",
+    explanation: "Man-hour plan dùng cho kế hoạch bảo dưỡng base (hangar)."
+},
+    {
+    id: 214,
+    question: "A maintenance release certificate shall contain",
+    options: [
+        "A. Basic details, date, AMO authorization and identity of certifying staff",
+        "B. Description only",
+        "C. Component life data"
+    ],
+    answer: "A",
+    explanation: "CRS phải có: nội dung công việc, ngày hoàn thành, AMO, và người ký."
+},
+
+{
+    id: 215,
+    question: "AMO shall report un-airworthy conditions to CAAV within",
+    options: [
+        "A. 3 working days",
+        "B. 2 working days",
+        "C. 1 working day"
+    ],
+    answer: "A",
+    explanation: "Báo cáo trong vòng 3 ngày làm việc."
+},
+
+{
+    id: 216,
+    question: "Where does the airworthiness technical data for an AMO holder come from?",
+    options: [
+        "A. Aircraft/component design organization",
+        "B. CAMO",
+        "C. AMO"
+    ],
+    answer: "A",
+    explanation: "Data kỹ thuật phải từ Design Organization (DOA)."
+},
+
+{
+    id: 217,
+    question: "AMO ratings are specified in",
+    options: [
+        "A. AMO Operations Specification",
+        "B. Capability list",
+        "C. AMO roster"
+    ],
+    answer: "A",
+    explanation: "Ops Spec ghi rating chính thức."
+},
+
+{
+    id: 218,
+    question: "VAR Part 5 applies to",
+    options: [
+        "A. Approved maintenance organizations and personnel working for them",
+        "B. VAR Part 4",
+        "C. VAR Part 7"
+    ],
+    answer: "A",
+    explanation: "VAR Part 5 áp dụng cho AMO và nhân sự liên quan."
+},
+
+{
+    id: 219,
+    question: "How many aircraft rating classes in VAR Part 5?",
+    options: [
+        "A. 7",
+        "B. 6",
+        "C. 5"
+    ],
+    answer: "A",
+    explanation: "Có 7 class aircraft rating."
+},
+
+{
+    id: 220,
+    question: "Aircraft rating for composite aircraft >5700kg is",
+    options: [
+        "A. Class 7",
+        "B. Class 6",
+        "C. Class 5"
+    ],
+    answer: "A",
+    explanation: "Composite lớn → Class 7."
+},
+
+{
+    id: 221,
+    question: "Which rating allows maintenance of powerplants?",
+    options: [
+        "A. Powerplant ratings",
+        "B. Propeller ratings",
+        "C. Aircraft ratings"
+    ],
+    answer: "A",
+    explanation: "Powerplant rating cho engine."
+},
+
+{
+    id: 222,
+    question: "When is a maintenance release required?",
+    options: [
+        "A. Before flight after completion of scheduled maintenance",
+        "B. Before completion of maintenance",
+        "C. Before maintenance"
+    ],
+    answer: "A",
+    explanation: "CRS phải có trước khi aircraft bay sau khi bảo dưỡng."
+},
    {
     id: 223,
     question: "Maintenance Organization Procedure Manual of a CAAV approved maintenance organisation is approved by.",
